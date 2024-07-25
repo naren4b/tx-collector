@@ -1,0 +1,59 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: process-transaction-<customer-id>-<timestamp>
+  namespace: transaction-requests
+spec:
+  template:
+    spec:
+      containers:
+      - name: transaction-processor
+        image: your-docker-image
+        env:
+        - name: CUSTOMER_ID
+          valueFrom:
+            configMapKeyRef:
+              name: transaction-request-<customer-id>-<timestamp>
+              key: customer_id
+        - name: START_DATE
+          valueFrom:
+            configMapKeyRef:
+              name: transaction-request-<customer-id>-<timestamp>
+              key: start_date
+        - name: END_DATE
+          valueFrom:
+            configMapKeyRef:
+              name: transaction-request-<customer-id>-<timestamp>
+              key: end_date
+        - name: API_URL
+          valueFrom:
+            secretKeyRef:
+              name: api-secrets
+              key: url
+        - name: API_USER
+          valueFrom:
+            secretKeyRef:
+              name: api-secrets
+              key: user
+        - name: API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: api-secrets
+              key: token
+        - name: S3_URL
+          valueFrom:
+            secretKeyRef:
+              name: s3-secrets
+              key: url
+        - name: S3_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: s3-secrets
+              key: access_key
+        - name: S3_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: s3-secrets
+              key: secret_key
+      restartPolicy: OnFailure
+  backoffLimit: 4

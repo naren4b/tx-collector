@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: transaction-request-<customer-id>-<timestamp>
+  namespace: transaction-requests
+data:
+  customer_id: "<customer_id>"
+  start_date: "<start_date>"
+  end_date: "<end_date>"
+  status: "pending"
